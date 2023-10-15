@@ -10,6 +10,11 @@ from sklearn.utils import shuffle
 from tensorflow import set_random_seed
 from trap_utils import test_neuron_cosine_sim, init_gpu, preprocess, CoreModel, build_bottleneck_model, load_dataset, \
     get_other_label_data, cal_roc, injection_func, generate_attack
+import warnings
+
+# Filter out specific deprecation warnings
+warnings.filterwarnings("ignore", category=FutureWarning)
+warnings.filterwarnings("ignore", category=DeprecationWarning)
 
 K.set_learning_phase(0)
 
@@ -116,6 +121,7 @@ def eval_defense():
 
     model = CoreModel(args.dataset, load_clean=True, load_model=False)
 
+    print("\n\n LOADING PICKLE \n\n")
     RES = pickle.load(open(RES_PATH, "rb"))
     target_ls = RES['target_ls']
 
