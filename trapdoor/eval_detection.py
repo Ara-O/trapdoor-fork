@@ -113,21 +113,26 @@ def eval_defense():
     MODEL_PATH = "models/{}_model.h5".format(args.dataset)
     RES_PATH = "results/{}_res.p".format(args.dataset)
 
+    print(MODEL_PATH, RES_PATH)
     sess = init_gpu(args.gpu)
     if args.attack == 'all':
         ATTACK = ["cw", "en", 'pgd']
     else:
         ATTACK = [args.attack]
 
+    print(ATTACK)
     model = CoreModel(args.dataset, load_clean=True, load_model=False)
 
     print("\n\n LOADING PICKLE \n\n")
     RES = pickle.load(open(RES_PATH, "rb"))
+
     target_ls = RES['target_ls']
 
     pattern_dict = RES['pattern_dict']
 
+    print(MODEL_PATH)
     new_model = keras.models.load_model(MODEL_PATH, compile=False)
+    print(new_model)
 
     train_X, train_Y, test_X, test_Y = load_dataset(dataset=args.dataset)
 

@@ -33,10 +33,14 @@ def fix_gpu_memory(mem_fraction=1):
 
 
 def init_gpu(gpu_index, force=False):
+    print("INITTING GPU")
+
     if isinstance(gpu_index, list):
         gpu_num = ','.join([str(i) for i in gpu_index])
     else:
         gpu_num = str(gpu_index)
+
+    print("GPU Index", gpu_num)
     if "CUDA_VISIBLE_DEVICES" in os.environ and os.environ["CUDA_VISIBLE_DEVICES"] and not force:
         print('GPU already initiated')
         return

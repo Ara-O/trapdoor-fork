@@ -76,9 +76,10 @@ def main():
     random.seed(args.seed)
     np.random.seed(args.seed)
     set_random_seed(args.seed)
-    sess = init_gpu(args.gpu)
+    sess = init_gpu(args.gpu, True)
     model = CoreModel(args.dataset, load_clean=False)
     new_model = model.model
+    print(new_model)
 
     target_ls = range(model.num_classes)
     INJECT_RATIO = args.inject_ratio
@@ -151,7 +152,7 @@ def main():
     
 
 
-    # print("Second Step: Injecting Trapdoor...")
+    print("Second Step: Injecting Trapdoor...")
     new_model.fit_generator(trap_train_gen, validation_data=test_nor_gen, steps_per_epoch=1,
                             epochs=1, verbose=2, callbacks=callbacks, validation_steps=1,
                             use_multiprocessing=True,
@@ -160,17 +161,27 @@ def main():
     if not os.path.exists(model_file):
         # raise Exception("NO GOOD MODEL!!!")
         print("no model exists")
+    else:
+        print("model exists")
 
+
+    print(new_model.summary())
+    print(new_model.summary)
+    new_model.save("test.h5")
+    print(RES)
     # new_model = keras.models.load_model(model_file)
-    loss, acc = new_model.evaluate_generator(test_nor_gen, verbose=0, steps=100)
 
-    RES["normal_acc"] = acc
-    loss, backdoor_acc = new_model.evaluate_generator(test_adv_gen, steps=200, verbose=0)
-    RES["trapdoor_acc"] = backdoor_acc
+    # ADDS THE NORMAL AND THE TRAPDOOR ACC TO THE RES
 
-    file_save_path = file_prefix + "_res.p"
-    pickle.dump(RES, open(file_save_path, 'wb'))
-    print("File saved to {}, use this path as protected-path for the eval script. ".format(file_save_path))
+    # loss, acc = new_model.evaluate_generator(test_nor_gen, verbose=0, steps=100)
+    # RES["normal_acc"] = acc
+    # loss, backdoor_acc = new_model.evaluate_generator(test_adv_gen, steps=200, verbose=0)
+    # RES["trapdoor_acc"] = backdoor_acc
+
+    # print("SAVING INTO MODELS FILE")
+    # file_save_path = file_prefix + "_res.p"
+    # pickle.dump(RES, open(file_save_path, 'wb'))
+    # print("File saved to {}, use this path as protected-path for the eval script. ".format(file_save_path))
 
 
 def parse_arguments(argv):
